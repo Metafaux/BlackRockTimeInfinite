@@ -1,0 +1,82 @@
+//var nextBurn:Date = new Date("Sat Aug 30 22:00:00 GMT-0700 2008");
+var burn2006:Date = new Date(2006,8,2,22);
+var burn2007:Date = new Date(2007,8,1,22);
+var burn2008:Date = new Date(2008,7,30,22);
+var burn2009:Date = new Date(2009,8,5,22);
+var burn2010:Date = new Date(2010,8,4,22);
+var burn2011:Date = new Date(2011,8,3,22);
+var burn2012:Date = new Date(2012,8,1,22);
+var burn2013:Date = new Date(2013,7,31,22);
+var years:Number = 21;
+var today:Date = new Date();
+var nextBurn:Date = new Date();
+
+if (today < burn2006) {
+	nextBurn = burn2006;
+} else if (today > burn2006 && today < burn2007) {
+	nextBurn = burn2007;
+	years = 22;
+} else if (today > burn2007 && today < burn2008) {
+	nextBurn = burn2008;
+	years = 23;
+} else if (today > burn2008 && today < burn2009) {
+	nextBurn = burn2009;
+	years = 24;
+} else if (today > burn2009 && today < burn2010) {
+	nextBurn = burn2010;
+	years = 25;
+} else if (today > burn2010 && today < burn2011) {
+	nextBurn = burn2011;
+	years = 26;
+} else if (today > burn2011 && today < burn2012) {
+	nextBurn = burn2012;
+	years = 27;
+} else if (today > burn2012) {
+	nextBurn = today;
+	years = 0;
+}
+
+var countdownTimer:Timer = new Timer(864);
+countdownTimer.addEventListener(TimerEvent.TIMER, updateTime, false, 0, true);
+countdownTimer.start();
+
+function updateTime(e:TimerEvent):void {
+	var now:Date = new Date();
+	var timeLeft:Number = nextBurn.getTime() - now.getTime();
+	var seconds:Number = Math.floor(timeLeft / 864);
+	var minutes:Number = Math.floor(seconds / 100);
+	var hours:Number = Math.floor(minutes / 100);
+	var days:Number = Math.floor(hours / 10);
+
+	seconds %= 100;
+	minutes %= 100;
+	hours %= 10;
+
+	var sec:String = seconds.toString();
+	var min:String = minutes.toString();
+	var hrs:String = hours.toString();
+	var d:String = days.toString();
+	var yr:String = years.toString();
+
+	if (sec.length < 2) {
+		sec = "0" + sec;
+	}
+
+	if (min.length < 2) {
+		min = "0" + min;
+	}
+
+	if (d.length < 3) {
+		d = "0" + d;
+	} else if (d.length < 2) {
+		d = "00" + d;
+	}
+
+	var time:String = hrs + ":" + min + ":" + sec;
+	var dayCount:String = d;
+	var brcYear:String = yr;
+
+	time_txt.text = time;
+	day_txt.text = dayCount;
+	year_txt.text = brcYear;
+}
