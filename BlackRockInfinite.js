@@ -4,7 +4,7 @@ const BURN_YEAR_ZERO = 1985;
 const TIME_UNIT = 864; // milliseconds
 const UTC_PACIFIC_OFFSET = 7;
 const BURN_HOUR_PDT = 22;
-const BURN_HOUR_UTC = BURN_HOUR_PDT + UTC_PACIFIC_OFFSET;
+const BURN_HOUR_UTC = (BURN_HOUR_PDT + UTC_PACIFIC_OFFSET) % 24;
 let currentYearIsPastBurnDay = false;
 let timerDisplayElement = {
 	DAYS: "days",
@@ -96,7 +96,7 @@ function GetNextBurnDay(dateObj) {
 
 function SetToFirstMonday(dateObj) {
 
-	const MONDAY_INDEX = 2; // 2 = UTC TUESDAY
+	const MONDAY_INDEX = 1; // 2 = UTC TUESDAY
 	const MONDAY_OFFSET = 8 + MONDAY_INDEX;
 	const DAYS_IN_WEEK = 7;
 
