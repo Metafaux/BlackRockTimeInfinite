@@ -14,18 +14,19 @@ let timerDisplayElement = {
 };
 let xtianSecondsCount = -1;
 
-console.log("BlackRockInfinite.js running");
+//console.log("BlackRockInfinite.js running");
 
 function OnMetricSecondTick() {
 	if (xtianSecondsCount >= 0){
 		//TODO: This won't work
-		xtianSecondsCount--;
+		xtianSecondsCount = xtianSecondsCount - TIME_UNIT;
 	}
+	// console.log("xtianSecondsCount = " + xtianSecondsCount);
 	let metricSeconds = Math.floor(xtianSecondsCount / TIME_UNIT);
 	let metricMinutes = Math.floor(metricSeconds / 100);
 	let metricHours = Math.floor(metricMinutes / 100);
 	let days = (Math.floor(metricHours / 10)).toString();
-	console.log("rawCalc"+days+":"+metricHours+":"+metricMinutes+":"+metricSeconds);
+	// console.log("rawCalc"+days+":"+metricHours+":"+metricMinutes+":"+metricSeconds);
 	metricSeconds = (metricSeconds %= 100).toString();
 	metricMinutes = (metricMinutes %= 100).toString();
 	metricHours = (metricHours %= 10).toString();
@@ -48,9 +49,9 @@ function OnMetricSecondTick() {
 
 function AddLeadingZero(numberString, length) {
 	let resultString = numberString;
-	console.log("add leading zero: resultString.length = " + resultString.length + ", length = " + length + ", string = " + resultString);
+	//console.log("add leading zero: resultString.length = " + resultString.length + ", length = " + length + ", string = " + resultString);
 	while (resultString.length < length) {
-		console.log("Adding leading zero...");
+		//console.log("Adding leading zero...");
 		resultString = "0" + resultString;
 	}
 	return resultString;
@@ -87,7 +88,7 @@ function GetNextBurnDay(dateObj) {
 	}
 
 	let base1month = nextBurnDay.getMonth() + 1;
-	console.log("Next Burn Day is: " + base1month + "/" + nextBurnDay.getDate() + "/" + nextBurnDay.getFullYear());
+	//console.log("Next Burn Day is: " + base1month + "/" + nextBurnDay.getDate() + "/" + nextBurnDay.getFullYear());
 
 	xtianSecondsCount = (nextBurnDay.getTime() - initTime);// / 10;
 	return nextBurnDay;
@@ -108,9 +109,9 @@ function SetToFirstMonday(dateObj) {
 		if (firstMonday === 0) firstMonday = DAYS_IN_WEEK;
 		dateObj.setUTCDate(firstMonday);
 	}
-	console.log("dateObj.getUTCDate: " + dateObj.getUTCDate());
+	//console.log("dateObj.getUTCDate: " + dateObj.getUTCDate());
 	let days = ["sunday", "monday", "tues", "wed", "thu", "fri", "sat"];
-	console.log("Date 1 is a " + days[dayOfWeek] + ", first Monday is on the " + firstMonday + " at " + dateObj.getUTCHours() + ":00");
+	//console.log("Date 1 is a " + days[dayOfWeek] + ", first Monday is on the " + firstMonday + " at " + dateObj.getUTCHours() + ":00");
 }
 
 /*
@@ -132,4 +133,4 @@ function GetBurnYear(fullYear) {
 }
 
 GetNextBurnDay(new Date());
-OnMetricSecondTick();
+window.setInterval(OnMetricSecondTick, TIME_UNIT);
