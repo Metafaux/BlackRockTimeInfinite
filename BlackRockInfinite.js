@@ -5,9 +5,56 @@ const TIME_UNIT = 864; // milliseconds
 const UTC_PACIFIC_OFFSET = 7;
 const BURN_HOUR_PDT = 22;
 const BURN_HOUR_UTC = BURN_HOUR_PDT + UTC_PACIFIC_OFFSET;
-
+let currentYearIsPastBurnDay = false;
+let timerDisplayElement = {
+	DAYS: "days",
+	HOURS: "hours",
+	MINUTES: "minutes",
+	SECONDS: "seconds"
+};
+let xtianSecondsCount = -1;
 
 console.log("BlackRockInfinite.js running");
+
+function OnMetricSecondTick() {
+	if (xtianSecondsCount >= 0){
+		//TODO: This won't work
+		xtianSecondsCount--;
+	}
+	let metricSeconds = Math.floor(xtianSecondsCount / TIME_UNIT);
+	let metricMinutes = Math.floor(metricSeconds / 100);
+	let metricHours = Math.floor(metricMinutes / 100);
+	let days = (Math.floor(metricHours / 10)).toString();
+	console.log("rawCalc"+days+":"+metricHours+":"+metricMinutes+":"+metricSeconds);
+	metricSeconds = (metricSeconds %= 100).toString();
+	metricMinutes = (metricMinutes %= 100).toString();
+	metricHours = (metricHours %= 10).toString();
+	metricSeconds = AddLeadingZero(metricSeconds, 2);
+	metricMinutes = AddLeadingZero(metricMinutes, 2);
+	metricHours = AddLeadingZero(metricHours, 2);
+	days = AddLeadingZero(days, 3);
+
+	let daysSpan = document.getElementById(timerDisplayElement.DAYS);
+	let hoursSpan = document.getElementById(timerDisplayElement.HOURS);
+	let minutesSpan = document.getElementById(timerDisplayElement.MINUTES);
+	let secondsSpan = document.getElementById(timerDisplayElement.SECONDS);
+
+	daysSpan.innerHTML = days;
+	hoursSpan.innerHTML = metricHours;
+	minutesSpan.innerHTML = metricMinutes;
+	secondsSpan.innerHTML = metricSeconds;
+
+}
+
+function AddLeadingZero(numberString, length) {
+	let resultString = numberString;
+	console.log("add leading zero: resultString.length = " + resultString.length + ", length = " + length + ", string = " + resultString);
+	while (resultString.length < length) {
+		console.log("Adding leading zero...");
+		resultString = "0" + resultString;
+	}
+	return resultString;
+}
 
 function GetNextBurnDay(dateObj) {
 	const SEPTEMBER_INDEX = 8;
@@ -23,6 +70,7 @@ function GetNextBurnDay(dateObj) {
 
 	if (initMonth > SEPTEMBER_INDEX) {
 		nextBurnDay.setUTCFullYear(nextBurnDay.getUTCFullYear() + 1);
+		currentYearIsPastBurnDay = true;
 	}
 
 	// Set to Labor Day
@@ -35,11 +83,13 @@ function GetNextBurnDay(dateObj) {
 		nextBurnDay.setUTCFullYear(nextBurnDay.getUTCFullYear() + 1);
 		SetToFirstMonday(nextBurnDay);
 		nextBurnDay.setUTCDate(nextBurnDay.getUTCDate() - 2);
+		currentYearIsPastBurnDay = true;
 	}
 
 	let base1month = nextBurnDay.getMonth() + 1;
 	console.log("Next Burn Day is: " + base1month + "/" + nextBurnDay.getDate() + "/" + nextBurnDay.getFullYear());
 
+	xtianSecondsCount = (nextBurnDay.getTime() - initTime);// / 10;
 	return nextBurnDay;
 }
 
@@ -81,4 +131,5 @@ function GetBurnYear(fullYear) {
 	return fullYear - BURN_YEAR_ZERO;
 }
 
-GetNextBurnDay(new Date(2018, 1, 1));
+GetNextBurnDay(new Date());
+OnMetricSecondTick();
