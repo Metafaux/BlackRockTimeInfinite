@@ -1,11 +1,12 @@
 "use strict";
+/* VERSION 0.4.1 */
 
 const BURN_YEAR_ZERO = 1985;
 const TIME_UNIT = 864; // milliseconds
 const UTC_PACIFIC_OFFSET = 7;
 const BURN_HOUR_PDT = 22;
 const BURN_HOUR_UTC = (BURN_HOUR_PDT + UTC_PACIFIC_OFFSET) % 24;
-let currentYearIsPastBurnDay = false;
+// let currentYearIsPastBurnDay = false;
 let timerDisplayElement = {
 	DAYS: "days",
 	HOURS: "hours",
@@ -13,6 +14,7 @@ let timerDisplayElement = {
 	SECONDS: "seconds"
 };
 let xtianSecondsCount = -1;
+let burnYear = 0;
 
 //console.log("BlackRockInfinite.js running");
 
@@ -34,13 +36,14 @@ function OnMetricSecondTick() {
 	metricMinutes = AddLeadingZero(metricMinutes, 2);
 	metricHours = AddLeadingZero(metricHours, 2);
 	days = AddLeadingZero(days, 3);
+	let year = AddLeadingZero(burnYear.toString(), 4);
 
 	let daysSpan = document.getElementById(timerDisplayElement.DAYS);
 	let hoursSpan = document.getElementById(timerDisplayElement.HOURS);
 	let minutesSpan = document.getElementById(timerDisplayElement.MINUTES);
 	let secondsSpan = document.getElementById(timerDisplayElement.SECONDS);
 
-	daysSpan.innerHTML = days;
+	daysSpan.innerHTML = year + "." + days;
 	hoursSpan.innerHTML = metricHours;
 	minutesSpan.innerHTML = metricMinutes;
 	secondsSpan.innerHTML = metricSeconds;
@@ -71,7 +74,7 @@ function GetNextBurnDay(dateObj) {
 
 	if (initMonth > SEPTEMBER_INDEX) {
 		nextBurnDay.setUTCFullYear(nextBurnDay.getUTCFullYear() + 1);
-		currentYearIsPastBurnDay = true;
+		// currentYearIsPastBurnDay = true;
 	}
 
 	// Set to Labor Day
@@ -84,13 +87,14 @@ function GetNextBurnDay(dateObj) {
 		nextBurnDay.setUTCFullYear(nextBurnDay.getUTCFullYear() + 1);
 		SetToFirstMonday(nextBurnDay);
 		nextBurnDay.setUTCDate(nextBurnDay.getUTCDate() - 2);
-		currentYearIsPastBurnDay = true;
+		// currentYearIsPastBurnDay = true;
 	}
 
 	let base1month = nextBurnDay.getMonth() + 1;
 	//console.log("Next Burn Day is: " + base1month + "/" + nextBurnDay.getDate() + "/" + nextBurnDay.getFullYear());
 
 	xtianSecondsCount = (nextBurnDay.getTime() - initTime);// / 10;
+	burnYear = GetBurnYear(nextBurnDay.getUTCFullYear());
 	return nextBurnDay;
 }
 
@@ -127,7 +131,8 @@ function SetToFirstMonday(dateObj) {
 */
 
 function GetBurnYear(fullYear) {
-	// TODO: add correction for post-Labor Day
+	// Post Labor Day correction done in GetNextBurnDay()
+	// if (currentYearIsPastBurnDay) fullYear = fullYear + 1;
 	// count from previous labor day
 	return fullYear - BURN_YEAR_ZERO;
 }
