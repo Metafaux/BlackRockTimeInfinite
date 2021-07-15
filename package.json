@@ -4,12 +4,8 @@
   "description": "Metric time countdown to the burn.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "tsc --build && eslint --ext .ts src"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Metafaux/BlackRockTimeInfinite.git"
   },
   "author": "Alexander D. Wilson",
   "license": "MIT",
@@ -18,12 +14,20 @@
   },
   "homepage": "https://github.com/Metafaux/BlackRockTimeInfinite#readme",
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/plugin-transform-runtime": "^7.14.5",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/runtime": "^7.14.6",
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/jest": "^26.0.24",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
+    "babel-loader": "^8.2.2",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "jest": "^27.0.6",
     "prettier": "^2.3.2",
+    "ts-jest": "^27.0.3",
     "typescript": "^4.3.5"
   },
   "dependencies": {}
