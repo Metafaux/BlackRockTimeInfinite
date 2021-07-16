@@ -1,30 +1,20 @@
 {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "jsx": true,
-    "useJSXTextNode": true
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
+    }
   },
-  "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "prettier/@typescript-eslint"
-  ],
-  "plugins": [
-    "@typescript-eslint",
-    "react-hooks",
-    "eslint-plugin-react-hooks",
-    "react",
-    "eslint-plugin-import"
-  ],
+  "extends": ["plugin:@typescript-eslint/recommended", "prettier"],
+  "plugins": ["@typescript-eslint", "eslint-plugin-import"],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/interface-name-prefix": "off",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "eqeqeq": ["error", "always"],
-    "no-var-requires": 0
+    "eqeqeq": ["error", "always"]
   },
   "settings": {
     "import/extensions": [".js", ".jsx", ".ts", ".tsx"],

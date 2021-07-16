@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Black Rock Time</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
     <style type="text/css">
       body {
         background-color: #000;
@@ -18,28 +21,32 @@
         margin: auto;
         font-size: 3.2em;
         line-height: 2.6em;
-        color: #FFF;
+        color: #fff;
         background-color: #000;
         text-align: center;
       }
-      #days {
+      #year {
         color: #000;
-        background-color: #FF0;
-        margin-right: 1em;
+        background-color: #ff0;
+      }
+      #days {
+        color: rgb(255, 0, 0);
       }
       #minutes {
-        color: #F0F;
+        color: #ff0;
       }
       #hours {
-        color: #FF0;
+        color: rgb(255, 94, 0);
       }
     </style>
   </head>
   <body>
     <div class="clockDiv">
-      ORBIT <span id="year">0000</span> <br/> 
-      <span id="days">000</span>:<span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+      Orbit<span id="year">0000</span><br /><span id="days">000</span>:<span
+        id="hours"
+        >00</span
+      >:<span id="minutes">00</span>:<span id="seconds">00</span>
     </div>
-    <script src="BlackRockInfinite.js"></script>
+    <script type="module" src="index.js"></script>
   </body>
 </html>

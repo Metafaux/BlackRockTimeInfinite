@@ -2,13 +2,7 @@
  * Black Rock Infinite: TypeScript
  */
 
-const METRIC_SECOND_VALUE_MS = 864;
-enum timerDisplayElement {
-  DAYS = 'days',
-  HOURS = 'hours',
-  MINUTES = 'minutes',
-  SECONDS = 'seconds',
-}
+export const METRIC_SECOND_VALUE_MS = 864;
 
 /**
  *
@@ -16,7 +10,10 @@ enum timerDisplayElement {
  * @param digitCount
  * @returns
  */
-export const addLeadingZeroes = (numberString: string, digitCount: number) => {
+export const addLeadingZeroes = (
+  numberString: string,
+  digitCount: number
+): string => {
   let resultString = numberString;
   while (resultString.length < digitCount) {
     resultString = '0' + resultString;
@@ -29,16 +26,17 @@ export const addLeadingZeroes = (numberString: string, digitCount: number) => {
  * Then, offsets to 4am Tuesday UTC, which is 9pm Monday Pacific
  * @param year number: full year
  */
-export const getLaborDate = (year: number) => {
+export const getLaborDate = (year: number): Date => {
   const SEPTEMBER_INDEX = 8;
   const MONDAY_INDEX = 1;
+  const ONE = 1;
 
   // Start with 1st of September
-  let laborDate = new Date(Date.UTC(year, SEPTEMBER_INDEX, 1));
+  const laborDate = new Date(Date.UTC(year, SEPTEMBER_INDEX, ONE));
 
   // Check until first Monday is found
   while (laborDate.getUTCDay() !== MONDAY_INDEX) {
-    laborDate.setUTCDate(laborDate.getUTCDate() + 1);
+    laborDate.setUTCDate(laborDate.getUTCDate() + ONE);
   }
 
   return laborDate;
@@ -68,7 +66,7 @@ export const getBurnTime = (year: number) => {
   const BURN_HOUR_UTC = 4; // 04:00 UTC = 21:00 PDT
   const BURN_MINUTE = 23; // Burns at 21:23:23 PDT
 
-  let burnDate = getLaborDate(year);
+  const burnDate = getLaborDate(year);
   burnDate.setUTCDate(burnDate.getUTCDate() - 1);
   burnDate.setUTCHours(BURN_HOUR_UTC);
   burnDate.setUTCMinutes(BURN_MINUTE);
@@ -126,7 +124,7 @@ export const getMetricTime = (nextBurnTime: number, referenceTime: number) => {
   const days = Math.floor(metricHours / 10).toString();
 
   return {
-    year: getBurnYear(nextBurnTime).toString(),
+    year: addLeadingZeroes(getBurnYear(nextBurnTime).toString(), 4),
     days: addLeadingZeroes(days, 3),
     hours: addLeadingZeroes((metricHours % 10).toString(), 2),
     minutes: addLeadingZeroes((metricMinutes % 100).toString(), 2),
