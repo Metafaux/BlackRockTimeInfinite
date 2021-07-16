@@ -3,10 +3,15 @@
   <head>
     <meta charset="utf-8">
     <title>Black Rock Time</title>
-    <link href="https://fonts.googleapis.com/css?family=Abel|Rajdhani" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style type="text/css">
+      body {
+        background-color: #000;
+      }
       .clockDiv {
-        font-family: 'Abel', sans-serif;
+        font-family: 'Share Tech Mono', monospace;
         width: 12em;
         height: 2.6em;
         /* max-width: 50em; */
@@ -32,7 +37,8 @@
   </head>
   <body>
     <div class="clockDiv">
-      <span id="days">0000.000</span> &nbsp; <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+      ORBIT <span id="year">0000</span> <br/> 
+      <span id="days">000</span>:<span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
     </div>
     <script src="BlackRockInfinite.js"></script>
   </body>
