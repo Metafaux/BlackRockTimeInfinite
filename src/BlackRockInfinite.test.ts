@@ -6,6 +6,7 @@ import {
   getNextBurnTime,
   getMetricTime,
   isItBurnNight,
+  getBurnYear,
 } from './BlackRockInfinite';
 
 const pacificTimeZone = 'America/Los_Angeles';
@@ -100,7 +101,7 @@ describe('Burn time', () => {
 describe('Burn night', () => {
   it('shows that Sep. 4, 2021, 21:23:22 PDT is NOT during Burn Night', () => {
     const sep4night = Date.UTC(2021, 8, 5, 4, 23, 22);
-    const isBurnNight = isItBurnNight(sep4night);
+    const isBurnNight = isItBurnNight(sep4night, getBurnTime(2021).getTime());
     const formattedPacificDate = getFormattedDateString(
       new Date(sep4night),
       true,
@@ -111,7 +112,7 @@ describe('Burn night', () => {
   });
   it('shows that Sep. 4, 2021, 21:23:24 PDT is during Burn Night', () => {
     const sep4night = Date.UTC(2021, 8, 5, 4, 23, 24);
-    const isBurnNight = isItBurnNight(sep4night);
+    const isBurnNight = isItBurnNight(sep4night, getBurnTime(2021).getTime());
     const formattedPacificDate = getFormattedDateString(
       new Date(sep4night),
       true,
@@ -122,7 +123,7 @@ describe('Burn night', () => {
   });
   it('shows that Sep. 5, 2021, 06:29:22 PDT is during Burn Night', () => {
     const sep4night = Date.UTC(2021, 8, 5, 13, 29, 22);
-    const isBurnNight = isItBurnNight(sep4night);
+    const isBurnNight = isItBurnNight(sep4night, getBurnTime(2021).getTime());
     const formattedPacificDate = getFormattedDateString(
       new Date(sep4night),
       true,
@@ -133,7 +134,7 @@ describe('Burn night', () => {
   });
   it('shows that Sep. 5, 2021, 06:29:24 PDT is NOT during Burn Night', () => {
     const sep4night = Date.UTC(2021, 8, 5, 13, 29, 24);
-    const isBurnNight = isItBurnNight(sep4night);
+    const isBurnNight = isItBurnNight(sep4night, getBurnTime(2021).getTime());
     const formattedPacificDate = getFormattedDateString(
       new Date(sep4night),
       true,
@@ -175,6 +176,39 @@ describe('Burn night', () => {
     expect(metricTime2.minutes).toEqual('00');
     expect(metricTime2.seconds).toEqual('00');
     expect(newBurnYear).toEqual(2034);
+  });
+  it('calculates Sep. 4, 2021 21:23:24 PDT to be Cycle 36', () => {
+    const sep4night = Date.UTC(2021, 8, 5, 4, 23, 24);
+    const cycle = getBurnYear(sep4night);
+    const formattedPacificDate = getFormattedDateString(
+      new Date(sep4night),
+      true,
+      pacificTimeZone
+    );
+    expect(cycle).toEqual(36);
+    expect(formattedPacificDate).toEqual('Sep 4, 2021, 09:23:24 PM PDT');
+  });
+  it('calculates Sep. 5, 2021 06:29:22 PDT to be Cycle 36', () => {
+    const sep4night = Date.UTC(2021, 8, 5, 13, 29, 22);
+    const cycle = getBurnYear(sep4night);
+    const formattedPacificDate = getFormattedDateString(
+      new Date(sep4night),
+      true,
+      pacificTimeZone
+    );
+    expect(cycle).toEqual(36);
+    expect(formattedPacificDate).toEqual('Sep 5, 2021, 06:29:22 AM PDT');
+  });
+  it('calculates Sep. 5, 2021 06:29:24 PDT to be Cycle 37', () => {
+    const sep4night = Date.UTC(2021, 8, 5, 13, 29, 24);
+    const cycle = getBurnYear(sep4night);
+    const formattedPacificDate = getFormattedDateString(
+      new Date(sep4night),
+      true,
+      pacificTimeZone
+    );
+    expect(cycle).toEqual(37);
+    expect(formattedPacificDate).toEqual('Sep 5, 2021, 06:29:24 AM PDT');
   });
 });
 

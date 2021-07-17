@@ -29,7 +29,7 @@ const initTime = () => {
   const burnDate = getNextBurnTime();
   nextBurnTime = burnDate.getTime();
   referenceTime = Date.now();
-  burnYear = getBurnYear(burnDate.getFullYear());
+  burnYear = getBurnYear(referenceTime);
   setYear(addLeadingZeroes(burnYear.toString(), 4));
 };
 

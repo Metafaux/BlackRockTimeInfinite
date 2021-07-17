@@ -62,6 +62,15 @@ export const getFormattedDateString = (
   });
 };
 
+/**
+ * Burn time from the Earth xtian Calendar year input.
+ * Does not calculate "next" burn.
+ *
+ * Projects Burn time to be 04:23:23 UTC = 21:23:23 PDT
+ *
+ * @param year number. 4-digit Earth year.
+ * @returns Date object
+ */
 export const getBurnTime = (year: number) => {
   const BURN_HOUR_UTC = 4; // 04:00 UTC = 21:00 PDT
   const BURN_MINUTE = 23; // Burns at 21:23:23 PDT
@@ -76,19 +85,32 @@ export const getBurnTime = (year: number) => {
   return burnDate;
 };
 
-export const getBurnYear = (burnTime: number) => {
-  const burnYear = new Date(burnTime).getFullYear();
-  const BURN_YEAR_ZERO = 1985;
-  return burnYear - BURN_YEAR_ZERO;
-};
-
-// length of early September night in Gerlach, in MS.
+// 9:06 length of early September night in Gerlach, converted to MS.
 const NINE_HR_SIX_M_MS = 9 * 60 * 60 * 1000 + 6 * 60 * 1000;
 
-export const isItBurnNight = (time: number) => {
-  const timeDate = new Date(time);
-  const calendarYearBurn = getBurnTime(timeDate.getFullYear());
-  const burnTime = calendarYearBurn.getTime();
+/**
+ * Gets the annual cycle number for Black Rock Time.
+ * Burning Man 1986 = 1
+ * Burning Man 1995 = 10
+ * Burning Man 1998 = 13
+ * Burning Man 2001 = 16
+ * Burning Man 2021 = 36
+ *
+ * New "cycle" begins at dawn after Burn Night, i.e.
+ * Burn time plus 9 hours, 6 minutes.
+ *
+ * @param time milliseconds value from epoch, i.e. getTime()
+ * @returns number
+ */
+export const getBurnYear = (time: number) => {
+  const BURN_YEAR_ZERO = 1985;
+  const year = new Date(time).getFullYear();
+  const calendarYearBurnEnd = getBurnTime(year).getTime() + NINE_HR_SIX_M_MS;
+  if (time > calendarYearBurnEnd) return year + 1 - BURN_YEAR_ZERO;
+  return year - BURN_YEAR_ZERO;
+};
+
+export const isItBurnNight = (time: number, burnTime: number) => {
   const comeDownDawn = burnTime + NINE_HR_SIX_M_MS;
 
   if (time < comeDownDawn && time > burnTime) {
@@ -108,9 +130,9 @@ export const isItBurnNight = (time: number) => {
 export const getNextBurnTime = (dateOverride?: number) => {
   const burnDate = dateOverride ? new Date(dateOverride) : new Date();
   const currentYear = burnDate.getFullYear();
-  const calendarYearBurn = getBurnTime(currentYear);
 
-  if (burnDate < calendarYearBurn) return calendarYearBurn;
+  const calendarYearBurnTime = getBurnTime(currentYear);
+  if (burnDate < calendarYearBurnTime) return getBurnTime(currentYear);
 
   return getBurnTime(currentYear + 1);
 };
@@ -132,7 +154,8 @@ export const getMetricTime = (
   afterburnCallback?: () => void
 ) => {
   if (referenceTime > nextBurnTime) {
-    if (afterburnCallback && !isItBurnNight(referenceTime)) {
+    // reset the clock if past Burn Night
+    if (afterburnCallback && !isItBurnNight(referenceTime, nextBurnTime)) {
       afterburnCallback();
     }
     return {
