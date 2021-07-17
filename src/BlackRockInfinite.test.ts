@@ -8,6 +8,8 @@ import {
   isItBurnNight,
 } from './BlackRockInfinite';
 
+const pacificTimeZone = 'America/Los_Angeles';
+
 describe('Labor Day date', () => {
   it('calculates 2021 Labor Day to be Sep. 6', () => {
     const laborDay2021 = getLaborDate(2021);
@@ -37,7 +39,6 @@ describe('Labor Day date', () => {
 });
 
 describe('Burn time', () => {
-  const pacificTimeZone = 'America/Los_Angeles';
   it('calculates 2021 Burn to happen Sep. 4, 09:23:23 PM PDT', () => {
     const burnTime = getBurnTime(2021);
     const formattedPacificDate = getFormattedDateString(
@@ -89,12 +90,14 @@ describe('Burn time', () => {
     const july16date = Date.UTC(2021, 6, 16, 16, 23, 23);
     const burnDate = getNextBurnTime(july16date);
     const metricTimeObj = getMetricTime(burnDate.getTime(), july16date);
-    expect(metricTimeObj.year).toEqual('36');
     expect(metricTimeObj.days).toEqual('050');
     expect(metricTimeObj.hours).toEqual('05');
     expect(metricTimeObj.minutes).toEqual('00');
     expect(metricTimeObj.seconds).toEqual('00');
   });
+});
+
+describe('Burn night', () => {
   it('shows that Sep. 4, 2021, 21:23:22 PDT is NOT during Burn Night', () => {
     const sep4night = Date.UTC(2021, 8, 5, 4, 23, 22);
     const isBurnNight = isItBurnNight(sep4night);
@@ -138,6 +141,40 @@ describe('Burn time', () => {
     );
     expect(isBurnNight).toEqual(false);
     expect(formattedPacificDate).toEqual('Sep 5, 2021, 06:29:24 AM PDT');
+  });
+  it('gets the correct data during Burn night 2033', () => {
+    const burnTime2033 = getBurnTime(2033).getTime();
+    let burnTime = burnTime2033;
+    const referenceTime = Date.UTC(2033, 8, 4, 4, 23, 24);
+    const initTime = () => {
+      burnTime = getBurnTime(2034).getTime();
+    };
+    const metricTime = getMetricTime(burnTime, referenceTime, initTime);
+    expect(burnTime).toEqual(burnTime2033);
+    expect(metricTime.days).toEqual('000');
+    expect(metricTime.hours).toEqual('00');
+    expect(metricTime.minutes).toEqual('00');
+    expect(metricTime.seconds).toEqual('00');
+  });
+  it('initializes 2034 clock after Burn Night 2033', () => {
+    const burnTime2033 = getBurnTime(2033).getTime();
+    const burnTime2034 = getBurnTime(2034).getTime();
+    let burnTime = burnTime2033;
+    const referenceTime = Date.UTC(2033, 8, 5, 4, 23, 23);
+    const initTime = () => {
+      burnTime = burnTime2034;
+    };
+    // first getMetricTime triggers the callback
+    const metricTime = getMetricTime(burnTime, referenceTime, initTime);
+    // next "tick" returns updated time for new year
+    const metricTime2 = getMetricTime(burnTime, referenceTime, initTime);
+    const newBurnYear = new Date(burnTime).getFullYear();
+    expect(burnTime).toEqual(burnTime2034);
+    expect(metricTime2.days).toEqual('363');
+    expect(metricTime2.hours).toEqual('00');
+    expect(metricTime2.minutes).toEqual('00');
+    expect(metricTime2.seconds).toEqual('00');
+    expect(newBurnYear).toEqual(2034);
   });
 });
 

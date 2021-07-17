@@ -76,7 +76,7 @@ export const getBurnTime = (year: number) => {
   return burnDate;
 };
 
-const getBurnYear = (burnTime: number) => {
+export const getBurnYear = (burnTime: number) => {
   const burnYear = new Date(burnTime).getFullYear();
   const BURN_YEAR_ZERO = 1985;
   return burnYear - BURN_YEAR_ZERO;
@@ -115,16 +115,42 @@ export const getNextBurnTime = (dateOverride?: number) => {
   return getBurnTime(currentYear + 1);
 };
 
-export const getMetricTime = (nextBurnTime: number, referenceTime: number) => {
-  const xtianMsCount = nextBurnTime - referenceTime;
+/**
+ * Only gets string display object from 2 time values.
+ * If 'nextBurnTime has passed, return  Burn Night state:
+ * all zeroes with currentBurnYear
+ * @param nextBurnTime
+ * @param referenceTime
+ * @param afterburnCallback function. optional. allows calling script to
+ * pass a reset function that only runs after Burn night is complete,
+ * because calling script controls "nextBurnTime" value.
+ * @returns
+ */
+export const getMetricTime = (
+  nextBurnTime: number,
+  referenceTime: number,
+  afterburnCallback?: () => void
+) => {
+  if (referenceTime > nextBurnTime) {
+    if (afterburnCallback && !isItBurnNight(referenceTime)) {
+      afterburnCallback();
+    }
+    return {
+      // year: addLeadingZeroes(getBurnYear(nextBurnTime).toString(), 4),
+      days: '000',
+      hours: '00',
+      minutes: '00',
+      seconds: '00',
+    };
+  }
 
+  const xtianMsCount = nextBurnTime - referenceTime;
   const metricSeconds = Math.floor(xtianMsCount / METRIC_SECOND_VALUE_MS);
   const metricMinutes = Math.floor(metricSeconds / 100);
   const metricHours = Math.floor(metricMinutes / 100);
   const days = Math.floor(metricHours / 10).toString();
 
   return {
-    year: addLeadingZeroes(getBurnYear(nextBurnTime).toString(), 4),
     days: addLeadingZeroes(days, 3),
     hours: addLeadingZeroes((metricHours % 10).toString(), 2),
     minutes: addLeadingZeroes((metricMinutes % 100).toString(), 2),

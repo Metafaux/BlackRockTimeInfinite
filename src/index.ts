@@ -1,11 +1,15 @@
 import {
+  addLeadingZeroes,
   getNextBurnTime,
   getMetricTime,
   METRIC_SECOND_VALUE_MS,
+  isItBurnNight,
+  getBurnYear,
 } from './BlackRockInfinite';
 
-const nextBurnTime = getNextBurnTime().getTime();
-let referenceTime = Date.now();
+let nextBurnTime = 0;
+let referenceTime = 0;
+let burnYear = 0;
 
 enum timerDisplayElement {
   YEAR = 'year',
@@ -21,20 +25,39 @@ let hoursSpan = document.getElementById(timerDisplayElement.HOURS);
 let minutesSpan = document.getElementById(timerDisplayElement.MINUTES);
 let secondsSpan = document.getElementById(timerDisplayElement.SECONDS);
 
-const setYear = () => {
-  const metricTime = getMetricTime(nextBurnTime, referenceTime);
-  if (yearSpan) yearSpan.innerHTML = metricTime.year;
+const initTime = () => {
+  const burnDate = getNextBurnTime();
+  nextBurnTime = burnDate.getTime();
+  referenceTime = Date.now();
+  burnYear = getBurnYear(burnDate.getFullYear());
+  setYear(addLeadingZeroes(burnYear.toString(), 4));
 };
 
+const setYear = (year: string) => {
+  if (yearSpan) yearSpan.innerHTML = year;
+};
+
+/**
+ * The index.ts contains the timer.
+ * It owns the referenceTime value.
+ *
+ * BlackRockInfinite should not have Date.now() or
+ * global values.
+ *
+ * It is the current YEAR value until the END of burn night
+ * Only refresh year then.
+ *
+ * THIS checks if isItBurnNight.
+ * GetMetricTime returns 00 if negative.
+ * Reset time once isItBurnNight returns false.
+ */
 const onMetricSecondTick = () => {
-  const metricTime = getMetricTime(nextBurnTime, referenceTime);
-  if (
-    metricTime.days === '00' &&
-    metricTime.hours === '00' &&
-    metricTime.minutes === '00'
-  ) {
-    if (yearSpan) yearSpan.innerHTML = metricTime.year;
-  }
+  // should initTime be a callback arg?
+  // if (referenceTime > nextBurnTime) {
+  //   if (!isItBurnNight(referenceTime)) initTime();
+  // }
+  const metricTime = getMetricTime(nextBurnTime, referenceTime, initTime);
+
   if (daysSpan) daysSpan.innerHTML = metricTime.days;
   if (hoursSpan) hoursSpan.innerHTML = metricTime.hours;
   if (minutesSpan) minutesSpan.innerHTML = metricTime.minutes;
@@ -42,5 +65,5 @@ const onMetricSecondTick = () => {
   referenceTime += METRIC_SECOND_VALUE_MS;
 };
 
-setYear();
+initTime();
 window.setInterval(onMetricSecondTick, METRIC_SECOND_VALUE_MS);
