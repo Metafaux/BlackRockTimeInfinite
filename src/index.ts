@@ -3,8 +3,9 @@ import {
   getNextBurnTime,
   getMetricTime,
   METRIC_SECOND_VALUE_MS,
-  isItBurnNight,
   getBurnYear,
+  getGateOpen,
+  stringifyMetricTime,
 } from './BlackRockInfinite';
 
 let nextBurnTime = 0;
@@ -24,6 +25,7 @@ let daysSpan = document.getElementById(timerDisplayElement.DAYS);
 let hoursSpan = document.getElementById(timerDisplayElement.HOURS);
 let minutesSpan = document.getElementById(timerDisplayElement.MINUTES);
 let secondsSpan = document.getElementById(timerDisplayElement.SECONDS);
+let gateSpan = document.getElementById('gate');
 
 const initTime = () => {
   const burnDate = getNextBurnTime();
@@ -31,6 +33,12 @@ const initTime = () => {
   referenceTime = Date.now();
   burnYear = getBurnYear(referenceTime);
   setYear(addLeadingZeroes(burnYear.toString(), 4));
+
+  const gateMetricTime = getMetricTime(
+    nextBurnTime,
+    getGateOpen(burnDate.getFullYear()).getTime()
+  );
+  if (gateSpan) gateSpan.innerHTML = stringifyMetricTime(gateMetricTime);
 };
 
 const setYear = (year: string) => {

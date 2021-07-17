@@ -85,6 +85,16 @@ export const getBurnTime = (year: number) => {
   return burnDate;
 };
 
+export const getGateOpen = (year: number) => {
+  const GATE_HOUR_UTC = 7;
+
+  const gateDate = getLaborDate(year);
+  gateDate.setUTCDate(gateDate.getUTCDate() - 8);
+  gateDate.setUTCHours(GATE_HOUR_UTC);
+
+  return gateDate;
+};
+
 // 9:06 length of early September night in Gerlach, converted to MS.
 const NINE_HR_SIX_M_MS = 9 * 60 * 60 * 1000 + 6 * 60 * 1000;
 
@@ -179,4 +189,26 @@ export const getMetricTime = (
     minutes: addLeadingZeroes((metricMinutes % 100).toString(), 2),
     seconds: addLeadingZeroes((metricSeconds % 100).toString(), 2),
   };
+};
+
+export const stringifyMetricTime = ({
+  days,
+  hours,
+  minutes,
+  seconds,
+}: {
+  days: string;
+  hours: string;
+  minutes: string;
+  seconds: string;
+}) => {
+  return (
+    addLeadingZeroes(days, 3) +
+    ':' +
+    addLeadingZeroes(hours, 2) +
+    ':' +
+    addLeadingZeroes(minutes, 2) +
+    ':' +
+    addLeadingZeroes(seconds, 2)
+  );
 };

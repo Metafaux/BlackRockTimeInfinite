@@ -11,18 +11,16 @@
     />
     <style type="text/css">
       body {
-        background-color: #000;
+        background-color: #111;
       }
       .clockDiv {
         font-family: 'Share Tech Mono', monospace;
-        width: 12em;
+        width: 16em;
         height: 2.6em;
-        /* max-width: 50em; */
         margin: auto;
-        font-size: 3.2em;
+        font-size: 3.2rem;
         line-height: 2.6em;
-        color: #fff;
-        background-color: #000;
+        color: #eee;
         text-align: center;
       }
       #year {
@@ -38,6 +36,10 @@
       #hours {
         color: rgb(255, 94, 0);
       }
+      #gateInfo {
+        color: #999;
+        font-size: 0.7em;
+      }
     </style>
   </head>
   <body>
@@ -45,7 +47,8 @@
       CYCLE<span id="year">0000</span><br /><span id="days">000</span>:<span
         id="hours"
         >00</span
-      >:<span id="minutes">00</span>:<span id="seconds">00</span>
+      >:<span id="minutes">00</span>:<span id="seconds">00</span><br />
+      <span id="gateInfo">GATE: <span id="gate">000:00:00:01</span></span>
     </div>
   </body>
 </html>

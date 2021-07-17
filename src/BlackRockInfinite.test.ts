@@ -7,6 +7,7 @@ import {
   getMetricTime,
   isItBurnNight,
   getBurnYear,
+  getGateOpen,
 } from './BlackRockInfinite';
 
 const pacificTimeZone = 'America/Los_Angeles';
@@ -36,6 +37,18 @@ describe('Labor Day date', () => {
   it('calculates 2033 Labor Day to be Sep. 5', () => {
     const laborDay2033 = getLaborDate(2033);
     expect(laborDay2033.getUTCDate()).toEqual(5);
+  });
+});
+
+describe('Gate time 2021', () => {
+  it('calculates 2021 Gate to open Aug 29, 12:00:00 AM PDT', () => {
+    const gateTime = getGateOpen(2021);
+    const formattedPacificDate = getFormattedDateString(
+      gateTime,
+      true,
+      pacificTimeZone
+    );
+    expect(formattedPacificDate).toEqual('Aug 29, 2021, 12:00:00 AM PDT');
   });
 });
 
