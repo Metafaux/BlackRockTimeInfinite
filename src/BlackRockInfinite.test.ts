@@ -8,6 +8,7 @@ import {
   isItBurnNight,
   getBurnYear,
   getGateOpen,
+  gateTimeDisplay,
 } from './BlackRockInfinite';
 
 const pacificTimeZone = 'America/Los_Angeles';
@@ -40,7 +41,7 @@ describe('Labor Day date', () => {
   });
 });
 
-describe('Gate time 2021', () => {
+describe('Gate time', () => {
   it('calculates 2021 Gate to open Aug 29, 12:00:00 AM PDT', () => {
     const gateTime = getGateOpen(2021);
     const formattedPacificDate = getFormattedDateString(
@@ -49,6 +50,29 @@ describe('Gate time 2021', () => {
       pacificTimeZone
     );
     expect(formattedPacificDate).toEqual('Aug 29, 2021, 12:00:00 AM PDT');
+  });
+  it('calculates that Gate time is accurate difference from Burn time', () => {
+    const gateTime = getGateOpen(2022);
+    const burnTime = getBurnTime(2022);
+    const difference = burnTime.getTime() - gateTime.getTime();
+    // Burn Saturday 9:23:23 PM minus Gate Sunday 12:00:00 AM = 595403000 MS
+    expect(difference).toEqual(595403000);
+    expect(getMetricTime(burnTime.getTime(), gateTime.getTime())).toEqual({
+      days: '006',
+      hours: '8',
+      minutes: '91',
+      seconds: '23',
+    });
+  });
+  it('shows the GATE OPEN message during the event', () => {
+    const burnTime = getBurnTime(2023);
+    const referenceTime = new Date(2023, 8, 1).getTime();
+    const gateDisplayString = gateTimeDisplay(
+      referenceTime,
+      2023,
+      burnTime.getTime()
+    );
+    expect(gateDisplayString).toEqual('GATE OPEN');
   });
 });
 
@@ -105,7 +129,7 @@ describe('Burn time', () => {
     const burnDate = getNextBurnTime(july16date);
     const metricTimeObj = getMetricTime(burnDate.getTime(), july16date);
     expect(metricTimeObj.days).toEqual('050');
-    expect(metricTimeObj.hours).toEqual('05');
+    expect(metricTimeObj.hours).toEqual('5');
     expect(metricTimeObj.minutes).toEqual('00');
     expect(metricTimeObj.seconds).toEqual('00');
   });
@@ -166,7 +190,7 @@ describe('Burn night', () => {
     const metricTime = getMetricTime(burnTime, referenceTime, initTime);
     expect(burnTime).toEqual(burnTime2033);
     expect(metricTime.days).toEqual('000');
-    expect(metricTime.hours).toEqual('00');
+    expect(metricTime.hours).toEqual('0');
     expect(metricTime.minutes).toEqual('00');
     expect(metricTime.seconds).toEqual('00');
   });
@@ -185,7 +209,7 @@ describe('Burn night', () => {
     const newBurnYear = new Date(burnTime).getFullYear();
     expect(burnTime).toEqual(burnTime2034);
     expect(metricTime2.days).toEqual('363');
-    expect(metricTime2.hours).toEqual('00');
+    expect(metricTime2.hours).toEqual('0');
     expect(metricTime2.minutes).toEqual('00');
     expect(metricTime2.seconds).toEqual('00');
     expect(newBurnYear).toEqual(2034);

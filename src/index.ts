@@ -4,13 +4,14 @@ import {
   getMetricTime,
   METRIC_SECOND_VALUE_MS,
   getBurnYear,
-  getGateOpen,
-  stringifyMetricTime,
+  MetricTime,
+  gateTimeDisplay,
 } from './BlackRockInfinite';
 
 let nextBurnTime = 0;
 let referenceTime = 0;
 let burnYear = 0;
+let lastTimeCheck: MetricTime;
 
 enum timerDisplayElement {
   YEAR = 'year',
@@ -34,11 +35,15 @@ const initTime = () => {
   burnYear = getBurnYear(referenceTime);
   setYear(addLeadingZeroes(burnYear.toString(), 4));
 
-  const gateMetricTime = getMetricTime(
-    nextBurnTime,
-    getGateOpen(burnDate.getFullYear()).getTime()
-  );
-  if (gateSpan) gateSpan.innerHTML = stringifyMetricTime(gateMetricTime);
+  // Use this to reset clock after idle / sleep
+  lastTimeCheck = getMetricTime(nextBurnTime, referenceTime);
+
+  if (gateSpan)
+    gateSpan.innerHTML = gateTimeDisplay(
+      referenceTime,
+      burnDate.getFullYear(),
+      nextBurnTime
+    );
 };
 
 const setYear = (year: string) => {
@@ -55,16 +60,18 @@ const setYear = (year: string) => {
  * It is the current YEAR value until the END of burn night
  * Only refresh year then.
  *
- * THIS checks if isItBurnNight.
  * GetMetricTime returns 00 if negative.
- * Reset time once isItBurnNight returns false.
  */
 const onMetricSecondTick = () => {
-  // should initTime be a callback arg?
-  // if (referenceTime > nextBurnTime) {
-  //   if (!isItBurnNight(referenceTime)) initTime();
-  // }
   const metricTime = getMetricTime(nextBurnTime, referenceTime, initTime);
+
+  // Refresh the time from Date.now() every metric hour.
+  if (
+    lastTimeCheck.days !== metricTime.days ||
+    lastTimeCheck.hours !== metricTime.hours
+  ) {
+    initTime();
+  }
 
   if (daysSpan) daysSpan.innerHTML = metricTime.days;
   if (hoursSpan) hoursSpan.innerHTML = metricTime.hours;

@@ -1,6 +1,15 @@
 /**
  * Black Rock Infinite: TypeScript
+ *
+ * Copyright (c) Alexander D. Wilson, all rights reserved.
  */
+
+export interface MetricTime {
+  days: string;
+  hours: string;
+  minutes: string;
+  seconds: string;
+}
 
 export const METRIC_SECOND_VALUE_MS = 864;
 
@@ -81,10 +90,12 @@ export const getBurnTime = (year: number) => {
   burnDate.setUTCMinutes(BURN_MINUTE);
   burnDate.setUTCSeconds(BURN_MINUTE);
 
-  // maybe this should just return getTime() number
   return burnDate;
 };
 
+// Gate opens a fixed amount of time before Burn:
+// 595403000 ms
+// 006:8:91:23
 export const getGateOpen = (year: number) => {
   const GATE_HOUR_UTC = 7;
 
@@ -152,7 +163,7 @@ export const getNextBurnTime = (dateOverride?: number) => {
  * If 'nextBurnTime has passed, return  Burn Night state:
  * all zeroes with currentBurnYear
  * @param nextBurnTime
- * @param referenceTime
+ * @param referenceTime now, or lookup time
  * @param afterburnCallback function. optional. allows calling script to
  * pass a reset function that only runs after Burn night is complete,
  * because calling script controls "nextBurnTime" value.
@@ -162,7 +173,7 @@ export const getMetricTime = (
   nextBurnTime: number,
   referenceTime: number,
   afterburnCallback?: () => void
-) => {
+): MetricTime => {
   if (referenceTime > nextBurnTime) {
     // reset the clock if past Burn Night
     if (afterburnCallback && !isItBurnNight(referenceTime, nextBurnTime)) {
@@ -171,7 +182,7 @@ export const getMetricTime = (
     return {
       // year: addLeadingZeroes(getBurnYear(nextBurnTime).toString(), 4),
       days: '000',
-      hours: '00',
+      hours: '0',
       minutes: '00',
       seconds: '00',
     };
@@ -185,7 +196,7 @@ export const getMetricTime = (
 
   return {
     days: addLeadingZeroes(days, 3),
-    hours: addLeadingZeroes((metricHours % 10).toString(), 2),
+    hours: (metricHours % 10).toString(),
     minutes: addLeadingZeroes((metricMinutes % 100).toString(), 2),
     seconds: addLeadingZeroes((metricSeconds % 100).toString(), 2),
   };
@@ -196,12 +207,7 @@ export const stringifyMetricTime = ({
   hours,
   minutes,
   seconds,
-}: {
-  days: string;
-  hours: string;
-  minutes: string;
-  seconds: string;
-}) => {
+}: MetricTime) => {
   return (
     addLeadingZeroes(days, 3) +
     ':' +
@@ -210,5 +216,17 @@ export const stringifyMetricTime = ({
     addLeadingZeroes(minutes, 2) +
     ':' +
     addLeadingZeroes(seconds, 2)
+  );
+};
+
+export const gateTimeDisplay = (
+  referenceTime: number,
+  burnYear: number,
+  nextBurnTime: number
+) => {
+  const gateOpenMs = getGateOpen(burnYear).getTime();
+  if (referenceTime > gateOpenMs) return 'GATE OPEN';
+  return (
+    'GATE: ' + stringifyMetricTime(getMetricTime(nextBurnTime, gateOpenMs))
   );
 };
