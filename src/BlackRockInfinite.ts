@@ -13,6 +13,9 @@ export interface MetricTime {
 
 export const METRIC_SECOND_VALUE_MS = 864;
 
+const DAYS_STRING_LENGTH = 3;
+const HUNDREDTHS_STRING_LENGTH = 2;
+
 /**
  *
  * @param numberString
@@ -23,11 +26,7 @@ export const addLeadingZeroes = (
   numberString: string,
   digitCount: number
 ): string => {
-  let resultString = numberString;
-  while (resultString.length < digitCount) {
-    resultString = '0' + resultString;
-  }
-  return resultString;
+  return numberString.padStart(digitCount, '0');
 };
 
 /**
@@ -195,10 +194,16 @@ export const getMetricTime = (
   const days = Math.floor(metricHours / 10).toString();
 
   return {
-    days: addLeadingZeroes(days, 3),
+    days: addLeadingZeroes(days, DAYS_STRING_LENGTH),
     hours: (metricHours % 10).toString(),
-    minutes: addLeadingZeroes((metricMinutes % 100).toString(), 2),
-    seconds: addLeadingZeroes((metricSeconds % 100).toString(), 2),
+    minutes: addLeadingZeroes(
+      (metricMinutes % 100).toString(),
+      HUNDREDTHS_STRING_LENGTH
+    ),
+    seconds: addLeadingZeroes(
+      (metricSeconds % 100).toString(),
+      HUNDREDTHS_STRING_LENGTH
+    ),
   };
 };
 
@@ -209,13 +214,13 @@ export const stringifyMetricTime = ({
   seconds,
 }: MetricTime) => {
   return (
-    addLeadingZeroes(days, 3) +
+    addLeadingZeroes(days, DAYS_STRING_LENGTH) +
     ':' +
-    addLeadingZeroes(hours, 2) +
+    hours +
     ':' +
-    addLeadingZeroes(minutes, 2) +
+    addLeadingZeroes(minutes, HUNDREDTHS_STRING_LENGTH) +
     ':' +
-    addLeadingZeroes(seconds, 2)
+    addLeadingZeroes(seconds, HUNDREDTHS_STRING_LENGTH)
   );
 };
 
